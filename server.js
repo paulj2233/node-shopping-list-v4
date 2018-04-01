@@ -105,6 +105,33 @@ app.post('/recipes', jsonParser, (req, res) => {
   res.status(201).json(item);
 });
 
+app.put('/recipes', jsonParser, (req, res) => {
+  const required4recipes = ['name', 'ingredients', 'id'];
+  for(let i = 0; i < required4recipes.length; i++){
+    if(!(required4recipes[i] in req.body)){
+      const message = `Missing \`${required4recipes[i]}\` in the request body`
+      console.error(message);
+      return res.status(400).send(message);
+    }
+  }
+
+ if (req.params.id !== req.body.id) {
+   const message = `Request path id (${req.params.id}) and request body id (${req.body.id}) must match`;
+    console.error(message);
+    return res.status(400).send(message);
+  }
+  Recipes.update({
+    name: req.body.name,
+    ingredients: req.body.ingredients,
+    id: req.params.id
+  })
+  return res.status(204).end();
+
+})
+
+
+
+
 app.delete('/recipes/:id', (req, res) => {
   Recipes.delete(req.params.id);
   console.log(`Deleted recipe \`${req.params.ID}\``);
